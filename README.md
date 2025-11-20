@@ -1,4 +1,4 @@
-# E0da E0da
+# Homebrew Tap by e0da
 
 ## How do I install these formulae?
 
