@@ -3,7 +3,7 @@ set -ex
 
 PLOCATE_BIN="/tmp/plocate-1.1.23-test/build-test/plocate"
 UPDATEDB_BIN="/tmp/plocate-1.1.23-test/build-test/updatedb"
-PLOCATE_DB="/var/db/plocate.db"
+PLOCATE_DB="/var/db/plocate/plocate.db"
 MLOCATE_DB="/var/db/locate.database"
 TEST_DIR="$HOME"
 
@@ -39,4 +39,3 @@ echo ""
 
 echo "Database sizes:"
 time ls -lh /var/db/locate.database /var/db/plocate.db 2>/dev/null || time ls -lh /var/db/locate.database
-
