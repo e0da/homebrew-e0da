@@ -1,0 +1,38 @@
+--- a/meson.build
++++ b/meson.build
+@@ -11,6 +11,12 @@ cxx = meson.get_compiler('cpp')
+ uringdep = dependency('liburing', required: false)
+ zstddep = dependency('libzstd')
+ threaddep = dependency('threads')
+ atomicdep = cxx.find_library('atomic', required: false)
+
++# Check for libuv when io_uring is not available (for macOS support)
++uvdep = dependency('libuv', required: false)
+ if not uringdep.found()
+ 	add_project_arguments('-DWITHOUT_URING', language: 'cpp')
++	if uvdep.found()
++		add_project_arguments('-DUSE_LIBUV', language: 'cpp')
++	endif
+ endif
+ if cxx.has_header('endian.h')
+ 	add_project_arguments('-DHAS_ENDIAN_H', language: 'cpp')
+@@ -33,7 +39,15 @@ if cxx.compiles(code, name: 'function multiversioning')
+ 	add_project_arguments('-DHAS_FUNCTION_MULTIVERSIONING', language: 'cpp')
+ endif
+
+-executable('plocate', ['plocate.cpp', 'io_uring_engine.cpp', 'turbopfor.cpp', 'parse_trigrams.cpp', 'serializer.cpp', 'access_rx_cache.cpp', 'needle.cpp', 'complete_pread.cpp'],
+-	dependencies: [uringdep, zstddep, threaddep, atomicdep],
++plocate_sources = ['plocate.cpp', 'io_uring_engine.cpp', 'turbopfor.cpp', 'parse_trigrams.cpp', 'serializer.cpp', 'access_rx_cache.cpp', 'needle.cpp', 'complete_pread.cpp']
++plocate_deps = [zstddep, threaddep, atomicdep]
++
++if uringdep.found()
++	plocate_deps += [uringdep]
++elif uvdep.found()
++	plocate_sources += ['libuv_shim.cpp']
++	plocate_deps += [uvdep]
++endif
++
++executable('plocate', plocate_sources,
++	dependencies: plocate_deps,
+ 	install: true,
+ 	install_mode: ['rwxr-sr-x', 'root', get_option('locategroup')])

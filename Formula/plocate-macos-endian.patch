@@ -1,0 +1,72 @@
+--- a/turbopfor.cpp
++++ b/turbopfor.cpp
+@@ -1,6 +1,20 @@
+ #ifdef HAS_ENDIAN_H
+ #include <endian.h>
++#else
++// macOS doesn't have endian.h, provide fallback implementations
++#ifdef __APPLE__
++#include <libkern/OSByteOrder.h>
++#define le16toh(x) OSSwapLittleToHostInt16(x)
++#define le32toh(x) OSSwapLittleToHostInt32(x)
++#define le64toh(x) OSSwapLittleToHostInt64(x)
++#define htole16(x) OSSwapHostToLittleInt16(x)
++#define htole32(x) OSSwapHostToLittleInt32(x)
++#define htole64(x) OSSwapHostToLittleInt64(x)
++#else
++// Generic fallback for little-endian systems (assumes host is little-endian)
++#define le16toh(x) (x)
++#define le32toh(x) (x)
++#define le64toh(x) (x)
++#endif
+ #endif
+ #include <stdint.h>
+ #include <string.h>
+--- a/turbopfor-encode.h
++++ b/turbopfor-encode.h
+@@ -13,6 +13,20 @@
+ #ifdef HAS_ENDIAN_H
+ #include <endian.h>
++#else
++// macOS doesn't have endian.h, provide fallback implementations
++#ifdef __APPLE__
++#include <libkern/OSByteOrder.h>
++#define le16toh(x) OSSwapLittleToHostInt16(x)
++#define le32toh(x) OSSwapLittleToHostInt32(x)
++#define le64toh(x) OSSwapLittleToHostInt64(x)
++#define htole16(x) OSSwapHostToLittleInt16(x)
++#define htole32(x) OSSwapHostToLittleInt32(x)
++#define htole64(x) OSSwapHostToLittleInt64(x)
++#else
++// Generic fallback for little-endian systems (assumes host is little-endian)
++#define le16toh(x) (x)
++#define le32toh(x) (x)
++#define le64toh(x) (x)
++#endif
+ #endif
+ #include <stdint.h>
+ #include <string.h>
+--- a/database-builder.cpp
++++ b/database-builder.cpp
+@@ -5,6 +5,20 @@
+ #ifdef HAS_ENDIAN_H
+ #include <endian.h>
++#else
++// macOS doesn't have endian.h, provide fallback implementations
++#ifdef __APPLE__
++#include <libkern/OSByteOrder.h>
++#define le16toh(x) OSSwapLittleToHostInt16(x)
++#define le32toh(x) OSSwapLittleToHostInt32(x)
++#define le64toh(x) OSSwapLittleToHostInt64(x)
++#define htole16(x) OSSwapHostToLittleInt16(x)
++#define htole32(x) OSSwapHostToLittleInt32(x)
++#define htole64(x) OSSwapHostToLittleInt64(x)
++#else
++// Generic fallback for little-endian systems (assumes host is little-endian)
++#define le16toh(x) (x)
++#define le32toh(x) (x)
++#define le64toh(x) (x)
++#endif
+ #endif
+ #include <algorithm>
+ #include <assert.h>
